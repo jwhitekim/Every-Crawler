@@ -1,0 +1,42 @@
+# .github/workflows/everytime_autolike.yml
+
+name: Everytime Auto-Like Automation
+
+# 언제 이 Action을 실행할지 정의하는 부분
+on:
+  workflow_dispatch: # GitHub Actions 탭에서 수동으로 실행할 수 있게 함
+  schedule:
+    - cron: '0 1 * * *' # 매일 UTC 1시에 실행 (한국 시간 오전 10시)
+
+# 어떤 작업을 수행할지 정의하는 부분
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      # Chrome 설치
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@latest
+      
+      # 시스템 의존성 설치
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3 libgbm1 libasound2t64
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Install Python packages
+        run: pip install -r requirements.txt
+      
+      - name: Run script
+        env:
+          EVERYTIME_USERNAME: ${{ secrets.EVERYTIME_USERNAME }}
+          EVERYTIME_PASSWORD: ${{ secrets.EVERYTIME_PASSWORD }}
+        run: python main.py everytime
+
+      

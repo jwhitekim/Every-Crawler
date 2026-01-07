@@ -1,0 +1,1 @@
+from core.everytime.everytime_auto import RunEverytimeAutoLike
